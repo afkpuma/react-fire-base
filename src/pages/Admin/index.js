@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import auth from '../../fireAuth'
 import { signOut } from 'firebase/auth'
 import db from '../../fireStore'
-import { addDoc, collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, query, orderBy, where, doc, deleteDoc } from 'firebase/firestore';
 
 import './admin.css'
 
 export default function Admin() {
   const [tarefaInput, setTarefaInput] = useState('')
   const [user, setUser] = useState({})
-  const [tarefas, setTarefas] = useState({})
+  const [tarefas, setTarefas] = useState([])
 
   useEffect(() => {
     async function loadTarefas() {
@@ -29,6 +29,7 @@ export default function Admin() {
               userUid: doc.data().userUid
             })
           })
+          
           console.log(lista)
           setTarefas(lista)
         })
@@ -62,6 +63,11 @@ export default function Admin() {
     await signOut(auth)
   }
 
+  async function deleteTarefa(id){
+    const docRef = doc(db, 'tarefas', id)
+    await deleteDoc(docRef)
+  }
+
 
   return (
     <div className='admin-container'>
@@ -76,14 +82,16 @@ export default function Admin() {
         <button className='btn-register' type='submit'>Registrar Tarefa</button>
       </form>
 
-      <article className='list'>
-        <p>JS e React</p>
+      {tarefas.map((item) => (
+      <article key={item.id} className="list">
+        <p>{item.tarefas}</p>
 
         <div>
           <button>Editar</button>
-          <button className='btn-delete'>Concluir</button>
+          <button onClick={ () => deleteTarefa(item.id)} className="btn-delete">Concluir</button>
         </div>
       </article>
+      ))}
 
       <button className='btn-logout' onClick={handleLogout}>Sair</button>
     </div>

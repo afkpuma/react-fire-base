@@ -15,6 +15,7 @@ export default function Register() {
 
     if(email !== '' && password !== ''){
       await createUserWithEmailAndPassword(auth, email, password)
+      navigate('/admin', { replace: true })
     }else{
       alert('Preencha todos os campos')
     }
@@ -46,7 +47,7 @@ export default function Register() {
 
       </form>
       
-      <Link className='button-link' to='/'>
+      <Link className='button-link'  to='/'>
         Ja possui uma conta? Faça o login
       </Link>
     </div>
